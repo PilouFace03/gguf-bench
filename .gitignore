@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Artefacts d'exécution, régénérés à chaque lancement
+run.log
+results/state.json
+results/state.json.tmp
+results/logs/
+
+# Éditeurs / OS
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,287 @@
+{
+  "version": 1,
+  "defaults": {
+    "mcq_system_fr": "Tu es un assistant rigoureux. Réponds uniquement par la lettre de la bonne réponse : A, B, C ou D. N'écris rien d'autre.",
+    "mcq_system_en": "You are a rigorous assistant. Answer only with the letter of the correct choice: A, B, C or D. Write nothing else.",
+    "gen_system": "Tu es un assistant utile et concis. Respecte strictement le format demandé.",
+    "mcq_idle_tokens": 1,
+    "mcq_fallback_tokens": 48
+  },
+  "mcq": [
+    {
+      "id": "fr-math-01", "lang": "fr", "cat": "maths",
+      "q": "Un train parcourt 180 km en 2 heures et 15 minutes. Quelle est sa vitesse moyenne ?",
+      "choices": ["72 km/h", "80 km/h", "90 km/h", "75 km/h"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-math-02", "lang": "fr", "cat": "maths",
+      "q": "Combien vaut 15 % de 240 ?",
+      "choices": ["24", "36", "32", "40"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-math-03", "lang": "fr", "cat": "maths",
+      "q": "Trois ouvriers construisent un mur en 12 jours. Combien de jours faut-il à quatre ouvriers travaillant au même rythme ?",
+      "choices": ["8 jours", "9 jours", "10 jours", "12 jours"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-math-04", "lang": "fr", "cat": "maths",
+      "q": "Après une remise de 20 %, un article coûte 80 euros. Quel était son prix initial ?",
+      "choices": ["96 euros", "100 euros", "104 euros", "120 euros"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-math-05", "lang": "fr", "cat": "maths",
+      "q": "Combien de diagonales possède un hexagone ?",
+      "choices": ["6", "8", "9", "12"],
+      "answer": "C"
+    },
+    {
+      "id": "fr-logique-01", "lang": "fr", "cat": "logique",
+      "q": "Tous les A sont des B. Certains B sont des C. Que peut-on en conclure ?",
+      "choices": ["Certains A sont des C, forcément", "Rien ne garantit que certains A soient des C", "Aucun A n'est un C", "Tous les C sont des A"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-logique-02", "lang": "fr", "cat": "logique",
+      "q": "Quelle est la suite logique : 2, 6, 12, 20, 30, ... ?",
+      "choices": ["36", "40", "42", "44"],
+      "answer": "C"
+    },
+    {
+      "id": "fr-logique-03", "lang": "fr", "cat": "logique",
+      "q": "Marie est plus grande que Paul. Paul est plus grand que Julie. Qui est le plus petit ?",
+      "choices": ["Marie", "Paul", "Julie", "Impossible à déterminer"],
+      "answer": "C"
+    },
+    {
+      "id": "fr-logique-04", "lang": "fr", "cat": "logique",
+      "q": "Tous les chats sont des mammifères. Aucun reptile n'est un mammifère. Que peut-on en conclure ?",
+      "choices": ["Aucun chat n'est un reptile", "Certains chats sont des reptiles", "Tous les reptiles sont des chats", "On ne peut rien conclure"],
+      "answer": "A"
+    },
+    {
+      "id": "fr-culture-01", "lang": "fr", "cat": "culture",
+      "q": "Quelle est la capitale de l'Australie ?",
+      "choices": ["Sydney", "Melbourne", "Canberra", "Perth"],
+      "answer": "C"
+    },
+    {
+      "id": "fr-culture-02", "lang": "fr", "cat": "culture",
+      "q": "Qui a écrit le roman « Les Misérables » ?",
+      "choices": ["Émile Zola", "Honoré de Balzac", "Victor Hugo", "Gustave Flaubert"],
+      "answer": "C"
+    },
+    {
+      "id": "fr-culture-03", "lang": "fr", "cat": "culture",
+      "q": "Combien de touches noires compte un piano standard de 88 touches ?",
+      "choices": ["30", "36", "40", "44"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-grammaire-01", "lang": "fr", "cat": "francais",
+      "q": "Quelle phrase est correctement accordée ?",
+      "choices": ["Les fleurs que j'ai cueillies sont fanées.", "Les fleurs que j'ai cueilli sont fanées.", "Les fleurs que j'ai cueillies est fanées.", "Les fleurs que j'ai cueilli est fanée."],
+      "answer": "A"
+    },
+    {
+      "id": "fr-grammaire-02", "lang": "fr", "cat": "francais",
+      "q": "Complétez : « Elles se sont ___ les mains. »",
+      "choices": ["lavé", "lavées", "lavés", "lavée"],
+      "answer": "A"
+    },
+    {
+      "id": "fr-ortho-01", "lang": "fr", "cat": "francais",
+      "q": "Quelle est la seule orthographe correcte ?",
+      "choices": ["dilemme", "dilemne", "dillème", "dilèmme"],
+      "answer": "A"
+    },
+    {
+      "id": "fr-vocab-01", "lang": "fr", "cat": "francais",
+      "q": "Que signifie le mot « ubiquité » ?",
+      "choices": ["La capacité d'être présent partout à la fois", "L'absence totale de mouvement", "Le fait de parler plusieurs langues", "La peur des espaces clos"],
+      "answer": "A"
+    },
+    {
+      "id": "fr-science-01", "lang": "fr", "cat": "sciences",
+      "q": "Quel organe produit l'insuline ?",
+      "choices": ["Le foie", "Le pancréas", "Les reins", "La thyroïde"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-science-02", "lang": "fr", "cat": "sciences",
+      "q": "Quelle planète est la plus proche du Soleil ?",
+      "choices": ["Vénus", "Mercure", "Mars", "La Terre"],
+      "answer": "B"
+    },
+    {
+      "id": "fr-histoire-01", "lang": "fr", "cat": "culture",
+      "q": "En quelle année a eu lieu la prise de la Bastille ?",
+      "choices": ["1789", "1799", "1759", "1815"],
+      "answer": "A"
+    },
+    {
+      "id": "fr-geo-01", "lang": "fr", "cat": "culture",
+      "q": "Quel est le plus long fleuve de France ?",
+      "choices": ["La Seine", "Le Rhône", "La Loire", "La Garonne"],
+      "answer": "C"
+    },
+    {
+      "id": "en-math-01", "lang": "en", "cat": "maths",
+      "q": "A shirt costs $40. It is discounted by 25%, then 10% sales tax is added. What is the final price?",
+      "choices": ["$30.00", "$33.00", "$34.00", "$36.00"],
+      "answer": "B"
+    },
+    {
+      "id": "en-math-02", "lang": "en", "cat": "maths",
+      "q": "What is the next prime number after 89?",
+      "choices": ["91", "93", "97", "99"],
+      "answer": "C"
+    },
+    {
+      "id": "en-math-03", "lang": "en", "cat": "maths",
+      "q": "If f(x) = 2x + 3, what is f(f(1))?",
+      "choices": ["8", "11", "13", "15"],
+      "answer": "C"
+    },
+    {
+      "id": "en-logic-01", "lang": "en", "cat": "logique",
+      "q": "All roses are flowers. Some flowers fade quickly. What follows logically?",
+      "choices": ["All roses fade quickly", "Some roses fade quickly", "No rose fades quickly", "Nothing follows about whether roses fade quickly"],
+      "answer": "D"
+    },
+    {
+      "id": "en-logic-02", "lang": "en", "cat": "logique",
+      "q": "A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost?",
+      "choices": ["$0.05", "$0.10", "$0.15", "$0.55"],
+      "answer": "A"
+    },
+    {
+      "id": "en-code-01", "lang": "en", "cat": "code",
+      "q": "In Python, what does len([1, 2, 3]) return?",
+      "choices": ["2", "3", "4", "An error"],
+      "answer": "B"
+    },
+    {
+      "id": "en-code-02", "lang": "en", "cat": "code",
+      "q": "What is the time complexity of binary search on a sorted array of n elements?",
+      "choices": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+      "answer": "B"
+    },
+    {
+      "id": "en-code-03", "lang": "en", "cat": "code",
+      "q": "In Python, what is the value of bool([])?",
+      "choices": ["True", "False", "None", "It raises an exception"],
+      "answer": "B"
+    },
+    {
+      "id": "en-code-04", "lang": "en", "cat": "code",
+      "q": "Which HTTP status code means « Not Found »?",
+      "choices": ["200", "301", "404", "500"],
+      "answer": "C"
+    },
+    {
+      "id": "en-code-05", "lang": "en", "cat": "code",
+      "q": "What does SELECT COUNT(*) FROM users return?",
+      "choices": ["The number of rows in users", "The number of columns in users", "The sum of a numeric column", "The name of the table"],
+      "answer": "A"
+    },
+    {
+      "id": "en-science-01", "lang": "en", "cat": "sciences",
+      "q": "At what temperature does pure water boil at sea level?",
+      "choices": ["90 °C", "100 °C", "110 °C", "120 °C"],
+      "answer": "B"
+    },
+    {
+      "id": "en-science-02", "lang": "en", "cat": "sciences",
+      "q": "Which organelle is known as the powerhouse of the cell?",
+      "choices": ["The nucleus", "The ribosome", "The mitochondrion", "The Golgi apparatus"],
+      "answer": "C"
+    },
+    {
+      "id": "en-geo-01", "lang": "en", "cat": "culture",
+      "q": "Which country had the largest population in 2024?",
+      "choices": ["China", "India", "United States", "Indonesia"],
+      "answer": "B"
+    },
+    {
+      "id": "en-grammar-01", "lang": "en", "cat": "anglais",
+      "q": "Which sentence is grammatically correct?",
+      "choices": ["Neither of the answers is correct.", "Neither of the answers are correct.", "Neither of the answer are correct.", "Neither of the answers be correct."],
+      "answer": "A"
+    },
+    {
+      "id": "en-vocab-01", "lang": "en", "cat": "anglais",
+      "q": "What does « ephemeral » mean?",
+      "choices": ["Lasting a very short time", "Extremely large", "Very expensive", "Difficult to understand"],
+      "answer": "A"
+    },
+    {
+      "id": "code-fr-01", "lang": "fr", "cat": "code",
+      "q": "En Python, que renvoie sorted([3, 1, 2]) ?",
+      "choices": ["[3, 1, 2]", "[1, 2, 3]", "[2, 1, 3]", "Une erreur"],
+      "answer": "B"
+    },
+    {
+      "id": "code-fr-02", "lang": "fr", "cat": "code",
+      "q": "Que fait la commande git commit ?",
+      "choices": ["Elle enregistre les modifications indexées dans l'historique local", "Elle envoie les modifications vers le dépôt distant", "Elle annule la dernière modification", "Elle crée une nouvelle branche"],
+      "answer": "A"
+    },
+    {
+      "id": "code-fr-03", "lang": "fr", "cat": "code",
+      "q": "En SQL, quelle clause sert à filtrer les lignes ?",
+      "choices": ["ORDER BY", "GROUP BY", "WHERE", "LIMIT"],
+      "answer": "C"
+    },
+    {
+      "id": "code-fr-04", "lang": "fr", "cat": "code",
+      "q": "Quelle est la complexité d'un accès par index dans une liste Python ?",
+      "choices": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+      "answer": "A"
+    },
+    {
+      "id": "code-fr-05", "lang": "fr", "cat": "code",
+      "q": "En JavaScript, que renvoie typeof null ?",
+      "choices": ["\"null\"", "\"object\"", "\"undefined\"", "\"number\""],
+      "answer": "B"
+    }
+  ],
+  "gen": [
+    {
+      "id": "gen-fr-reason", "lang": "fr", "cat": "raisonnement", "max_tokens": 400,
+      "prompt": "Un fermier élève des poules et des lapins. Il compte 35 têtes et 94 pattes. Combien y a-t-il de lapins ? Donne le nombre puis une courte explication.",
+      "check": {"type": "numeric", "value": 12}
+    },
+    {
+      "id": "gen-fr-summary", "lang": "fr", "cat": "resume", "max_tokens": 200,
+      "prompt": "Résume le texte suivant en une seule phrase de 30 mots maximum, sans introduction.\n\nTexte : « Le loup est revenu dans les Alpes françaises depuis les années 1990, après avoir disparu du territoire pendant près d'un siècle. Sa présence divise : les éleveurs dénoncent des attaques répétées sur les troupeaux et réclament davantage de moyens de protection, tandis que les naturalistes soulignent son rôle dans la régulation des populations d'ongulés sauvages. Les pouvoirs publics ont mis en place un plan national d'action qui combine indemnisations, aide aux clôtures électriques et autorisation de tirs encadrés. Le débat reste vif, et le nombre de loups continue d'augmenter chaque année. »",
+      "check": {"type": "words_max", "value": 35, "keywords": ["loup"]}
+    },
+    {
+      "id": "gen-en-code", "lang": "en", "cat": "code", "max_tokens": 500,
+      "prompt": "Write a Python function `is_palindrome(s: str) -> bool` that returns True if s reads the same forwards and backwards, ignoring case, spaces and punctuation. Output only the code, with no explanation and no markdown fences.",
+      "check": {
+        "type": "python_test",
+        "code": "assert bool(is_palindrome('A man, a plan, a canal: Panama')) is True\nassert bool(is_palindrome('abc')) is False\nassert bool(is_palindrome('')) is True\nassert bool(is_palindrome(\"No 'x' in Nixon\")) is True\nassert bool(is_palindrome('12321')) is True\nassert bool(is_palindrome('123456')) is False"
+      }
+    },
+    {
+      "id": "gen-en-json", "lang": "en", "cat": "instruction", "max_tokens": 220,
+      "prompt": "Return only a valid JSON object, with no markdown and no explanation, describing a fictional person with exactly these keys: name (string), age (integer), city (string), hobbies (array of exactly 2 strings).",
+      "check": {"type": "json", "keys": ["name", "age", "city", "hobbies"], "types": {"age": "int", "hobbies": "list"}}
+    },
+    {
+      "id": "gen-fr-translate", "lang": "fr", "cat": "traduction", "max_tokens": 180,
+      "prompt": "Traduis en français, sans aucun commentaire : « The meeting was postponed because the client had not received the contract. »",
+      "check": {"type": "keywords", "value": ["réunion", "contrat", "client"]}
+    },
+    {
+      "id": "gen-en-format", "lang": "en", "cat": "instruction", "max_tokens": 200,
+      "prompt": "List exactly 5 bullet points, each starting with « - » and containing at most 8 words, about the benefits of sleep. No introduction, no conclusion, no extra text.",
+      "check": {"type": "bullets", "count": 5, "max_words": 8}
+    }
+  ]
+}

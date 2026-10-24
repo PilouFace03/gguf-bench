@@ -1,0 +1,5 @@
+model,arch,params_b,quant,size_gb,ctx,n_ctx_server,threads,load_s,pp_tok_s,pp_prompt_n,tg_tok_s,tg_tokens,ttft_ms,stream_tok_s,mcq_soft,mcq_acc,mcq_coverage,mcq_bias,gen_score,status,error,ts
+Qwen3.5-0.8B-Q4_K_M.gguf,qwen35,0.75,Q4_K_M,0.53,4096,4096,6,2.0,271.97,394,35.76,128,151.11,36.07,0.498,0.7,1.0,0.389,0.833,ok,,2026-10-24T15:05:57
+Qwen3.5-2B-Q4_K_M.gguf,qwen35,1.88,Q4_K_M,1.28,4096,4096,6,4.5,134.67,394,18.92,128,255.48,18.94,0.631,0.75,1.0,0.201,0.833,ok,,2026-10-24T15:14:01
+Qwen3.5-4B-Q4_K_M.gguf,qwen35,4.21,Q4_K_M,2.74,4096,4096,6,8.0,54.2,394,9.15,128,684.51,9.2,0.786,0.825,1.0,0.233,1.0,ok,,2026-10-24T15:17:35
+Spark-X2.6-4B-Q4_K_M.gguf,spark2_5,4.45,Q4_K_M,3.54,4096,4096,6,10.0,53.0,529,10.06,128,739.23,10.05,0.691,0.675,1.0,0.237,0.833,ok,,2026-10-24T15:29:29

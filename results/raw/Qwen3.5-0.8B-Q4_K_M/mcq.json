@@ -1,0 +1,882 @@
+[
+ {
+  "id": "fr-math-01",
+  "cat": "maths",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "A",
+  "soft": 0.1914956021569518,
+  "correct": false,
+  "probs": {
+   "A": 0.361,
+   "B": 0.191,
+   "C": 0.221,
+   "D": 0.227
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-math-02",
+  "cat": "maths",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "C",
+  "soft": 0.27090124975716395,
+  "correct": false,
+  "probs": {
+   "A": 0.206,
+   "B": 0.271,
+   "C": 0.279,
+   "D": 0.245
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-math-03",
+  "cat": "maths",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "A",
+  "soft": 0.2468813945225491,
+  "correct": false,
+  "probs": {
+   "A": 0.305,
+   "B": 0.247,
+   "C": 0.206,
+   "D": 0.243
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-math-04",
+  "cat": "maths",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "A",
+  "soft": 0.21528327956607854,
+  "correct": false,
+  "probs": {
+   "A": 0.316,
+   "B": 0.215,
+   "C": 0.263,
+   "D": 0.206
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-math-05",
+  "cat": "maths",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "B",
+  "soft": 0.19699104506164428,
+  "correct": false,
+  "probs": {
+   "A": 0.268,
+   "B": 0.307,
+   "C": 0.197,
+   "D": 0.228
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "D",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-logique-01",
+  "cat": "logique",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "A",
+  "soft": 0.23128457806385178,
+  "correct": false,
+  "probs": {
+   "A": 0.432,
+   "B": 0.231,
+   "C": 0.156,
+   "D": 0.18
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-logique-02",
+  "cat": "logique",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.30093156413938316,
+  "correct": true,
+  "probs": {
+   "A": 0.195,
+   "B": 0.23,
+   "C": 0.301,
+   "D": 0.274
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-logique-03",
+  "cat": "logique",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.39974237439382254,
+  "correct": true,
+  "probs": {
+   "A": 0.181,
+   "B": 0.188,
+   "C": 0.4,
+   "D": 0.231
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-logique-04",
+  "cat": "logique",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.4184249968265872,
+  "correct": true,
+  "probs": {
+   "A": 0.418,
+   "B": 0.13,
+   "C": 0.13,
+   "D": 0.322
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-culture-01",
+  "cat": "culture",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.91262840340269,
+  "correct": true,
+  "probs": {
+   "A": 0.038,
+   "B": 0.015,
+   "C": 0.913,
+   "D": 0.034
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "B",
+   "A",
+   "D"
+  ]
+ },
+ {
+  "id": "fr-culture-02",
+  "cat": "culture",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.3871046224884334,
+  "correct": true,
+  "probs": {
+   "A": 0.183,
+   "B": 0.331,
+   "C": 0.387,
+   "D": 0.1
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "fr-culture-03",
+  "cat": "culture",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "D",
+  "soft": 0.20703739053775105,
+  "correct": false,
+  "probs": {
+   "A": 0.116,
+   "B": 0.207,
+   "C": 0.127,
+   "D": 0.55
+  },
+  "rotations": 4,
+  "texts": [
+   "D",
+   "C",
+   "B",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-grammaire-01",
+  "cat": "francais",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "B",
+  "soft": 0.22577384247091944,
+  "correct": false,
+  "probs": {
+   "A": 0.226,
+   "B": 0.354,
+   "C": 0.124,
+   "D": 0.296
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "fr-grammaire-02",
+  "cat": "francais",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "B",
+  "soft": 0.1576594039043414,
+  "correct": false,
+  "probs": {
+   "A": 0.158,
+   "B": 0.397,
+   "C": 0.303,
+   "D": 0.142
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-ortho-01",
+  "cat": "francais",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.3892201549524936,
+  "correct": true,
+  "probs": {
+   "A": 0.389,
+   "B": 0.194,
+   "C": 0.244,
+   "D": 0.173
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "C",
+   "A"
+  ]
+ },
+ {
+  "id": "fr-vocab-01",
+  "cat": "francais",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.9525322159173735,
+  "correct": true,
+  "probs": {
+   "A": 0.953,
+   "B": 0.003,
+   "C": 0.014,
+   "D": 0.03
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "fr-science-01",
+  "cat": "sciences",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.9846500781261618,
+  "correct": true,
+  "probs": {
+   "A": 0.008,
+   "B": 0.985,
+   "C": 0.003,
+   "D": 0.004
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ]
+ },
+ {
+  "id": "fr-science-02",
+  "cat": "sciences",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.8795271382079239,
+  "correct": true,
+  "probs": {
+   "A": 0.053,
+   "B": 0.88,
+   "C": 0.05,
+   "D": 0.017
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ]
+ },
+ {
+  "id": "fr-histoire-01",
+  "cat": "culture",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.5853809669933826,
+  "correct": true,
+  "probs": {
+   "A": 0.585,
+   "B": 0.196,
+   "C": 0.118,
+   "D": 0.1
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "fr-geo-01",
+  "cat": "culture",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.3037865990566765,
+  "correct": true,
+  "probs": {
+   "A": 0.299,
+   "B": 0.187,
+   "C": 0.304,
+   "D": 0.21
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "en-math-01",
+  "cat": "maths",
+  "lang": "en",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.28321603941887696,
+  "correct": true,
+  "probs": {
+   "A": 0.203,
+   "B": 0.283,
+   "C": 0.272,
+   "D": 0.242
+  },
+  "rotations": 4,
+  "texts": [
+   "D",
+   "A",
+   "D",
+   "D"
+  ]
+ },
+ {
+  "id": "en-math-02",
+  "cat": "maths",
+  "lang": "en",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.5899854115045978,
+  "correct": true,
+  "probs": {
+   "A": 0.115,
+   "B": 0.19,
+   "C": 0.59,
+   "D": 0.105
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "B",
+   "A",
+   "D"
+  ]
+ },
+ {
+  "id": "en-math-03",
+  "cat": "maths",
+  "lang": "en",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.2654105938318275,
+  "correct": true,
+  "probs": {
+   "A": 0.232,
+   "B": 0.253,
+   "C": 0.265,
+   "D": 0.25
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "en-logic-01",
+  "cat": "logique",
+  "lang": "en",
+  "answer": "D",
+  "pred": "B",
+  "soft": 0.25903438473995777,
+  "correct": false,
+  "probs": {
+   "A": 0.198,
+   "B": 0.307,
+   "C": 0.236,
+   "D": 0.259
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "B",
+   "D",
+   "A"
+  ]
+ },
+ {
+  "id": "en-logic-02",
+  "cat": "logique",
+  "lang": "en",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.27375825600728343,
+  "correct": true,
+  "probs": {
+   "A": 0.274,
+   "B": 0.26,
+   "C": 0.251,
+   "D": 0.216
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "A"
+  ]
+ },
+ {
+  "id": "en-code-01",
+  "cat": "code",
+  "lang": "en",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.767873038930306,
+  "correct": true,
+  "probs": {
+   "A": 0.11,
+   "B": 0.768,
+   "C": 0.052,
+   "D": 0.071
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ]
+ },
+ {
+  "id": "en-code-02",
+  "cat": "code",
+  "lang": "en",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.8344019543447678,
+  "correct": true,
+  "probs": {
+   "A": 0.061,
+   "B": 0.834,
+   "C": 0.051,
+   "D": 0.054
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ]
+ },
+ {
+  "id": "en-code-03",
+  "cat": "code",
+  "lang": "en",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.39305641704056105,
+  "correct": true,
+  "probs": {
+   "A": 0.274,
+   "B": 0.393,
+   "C": 0.188,
+   "D": 0.144
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "A",
+   "D",
+   "B"
+  ]
+ },
+ {
+  "id": "en-code-04",
+  "cat": "code",
+  "lang": "en",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.9024600383252501,
+  "correct": true,
+  "probs": {
+   "A": 0.03,
+   "B": 0.03,
+   "C": 0.902,
+   "D": 0.038
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "B",
+   "A",
+   "D"
+  ]
+ },
+ {
+  "id": "en-code-05",
+  "cat": "code",
+  "lang": "en",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.678918923003118,
+  "correct": true,
+  "probs": {
+   "A": 0.679,
+   "B": 0.112,
+   "C": 0.1,
+   "D": 0.11
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "en-science-01",
+  "cat": "sciences",
+  "lang": "en",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.8841388253993799,
+  "correct": true,
+  "probs": {
+   "A": 0.047,
+   "B": 0.884,
+   "C": 0.041,
+   "D": 0.028
+  },
+  "rotations": 4,
+  "texts": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ]
+ },
+ {
+  "id": "en-science-02",
+  "cat": "sciences",
+  "lang": "en",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.8930816374385737,
+  "correct": true,
+  "probs": {
+   "A": 0.033,
+   "B": 0.04,
+   "C": 0.893,
+   "D": 0.034
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "B",
+   "A",
+   "D"
+  ]
+ },
+ {
+  "id": "en-geo-01",
+  "cat": "culture",
+  "lang": "en",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.3041450417366497,
+  "correct": true,
+  "probs": {
+   "A": 0.248,
+   "B": 0.304,
+   "C": 0.245,
+   "D": 0.203
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "D",
+   "D"
+  ]
+ },
+ {
+  "id": "en-grammar-01",
+  "cat": "anglais",
+  "lang": "en",
+  "answer": "A",
+  "pred": "B",
+  "soft": 0.22511829610368,
+  "correct": false,
+  "probs": {
+   "A": 0.225,
+   "B": 0.416,
+   "C": 0.171,
+   "D": 0.188
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "en-vocab-01",
+  "cat": "anglais",
+  "lang": "en",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.8683211694239562,
+  "correct": true,
+  "probs": {
+   "A": 0.868,
+   "B": 0.039,
+   "C": 0.03,
+   "D": 0.063
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "code-fr-01",
+  "cat": "code",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "B",
+  "soft": 0.6157181326613919,
+  "correct": true,
+  "probs": {
+   "A": 0.029,
+   "B": 0.616,
+   "C": 0.332,
+   "D": 0.023
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "A",
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "code-fr-02",
+  "cat": "code",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.8266921695612979,
+  "correct": true,
+  "probs": {
+   "A": 0.827,
+   "B": 0.132,
+   "C": 0.017,
+   "D": 0.025
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "code-fr-03",
+  "cat": "code",
+  "lang": "fr",
+  "answer": "C",
+  "pred": "C",
+  "soft": 0.9825428363491173,
+  "correct": true,
+  "probs": {
+   "A": 0.004,
+   "B": 0.01,
+   "C": 0.983,
+   "D": 0.004
+  },
+  "rotations": 4,
+  "texts": [
+   "C",
+   "B",
+   "A",
+   "D"
+  ]
+ },
+ {
+  "id": "code-fr-04",
+  "cat": "code",
+  "lang": "fr",
+  "answer": "A",
+  "pred": "A",
+  "soft": 0.4880104850138151,
+  "correct": true,
+  "probs": {
+   "A": 0.488,
+   "B": 0.252,
+   "C": 0.185,
+   "D": 0.075
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "A",
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "code-fr-05",
+  "cat": "code",
+  "lang": "fr",
+  "answer": "B",
+  "pred": "A",
+  "soft": 0.1365154085667747,
+  "correct": false,
+  "probs": {
+   "A": 0.485,
+   "B": 0.137,
+   "C": 0.271,
+   "D": 0.107
+  },
+  "rotations": 4,
+  "texts": [
+   "A",
+   "D",
+   "C",
+   "B"
+  ]
+ }
+]
