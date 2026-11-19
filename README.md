@@ -5,6 +5,11 @@ Banc d'essai pour une liste de fichiers `.gguf` : un seul fichier Python
 écrit les résultats, arrête le serveur et passe au modèle suivant. Un tableau de
 bord web permet de suivre l'exécution en direct.
 
+Trois épreuves : **vitesse** (préfill, génération, TTFT), **qualité** (40 QCM
+neutralisés contre le biais de position + 6 tâches génératives auto-notées) et
+**page web** (landing page HTML mono-fichier, comparée visuellement dans une
+galerie).
+
 ## État de la machine
 
 | | |
@@ -13,6 +18,15 @@ bord web permet de suivre l'exécution en direct.
 | RAM | 8 Go, **sans swap** → garde-fou mémoire dans le script |
 | GPU | aucun (bench 100 % CPU) |
 | llama.cpp | `v0.7.0` compilé sur place (`-DGGML_NATIVE=ON`), dans `/root/llama.cpp` |
+
+## Prérequis
+
+- Python ≥ 3.9 avec `requests` (seule dépendance : `pip install -r requirements.txt`) ;
+- un binaire `llama-server` récent (testé avec la build `v0.7.0`), cherché par défaut
+  dans `/root/llama.cpp/build/bin/llama-server` — surchargeable avec `--server`.
+
+Le tableau de bord et la galerie n'utilisent que la bibliothèque standard : pas de
+Flask, pas de Node, pas de navigateur headless.
 
 ## Utilisation
 
@@ -110,15 +124,46 @@ dépassent 95 % de la RAM disponible (ce n'est plus le cas avec la sélection ac
 | Qwen3.5-4B-Q4_K_M | unsloth/Qwen3.5-4B-GGUF | 2,74 Go | |
 | Spark-X2.6-4B-Q4_K_M | XHToken/Spark-X2.6-4B-GGUF | 3,54 Go | archi `spark2_5` |
 
-Écartés (déplacés dans `/root/models/_hors_test/`, récupérables d'un `mv`) :
+Écartés du test, trop volumineux pour de l'IA locale rapide sur 8 Go (supprimés
+après la campagne, re-téléchargeables depuis les mêmes dépôts) :
 
 | Fichier | Taille | Raison |
 |---|---|---|
 | Qwen3.5-9B-Q4_K_M | 5,68 Go | trop lent / trop juste en RAM pour un usage local rapide |
 | Nemotron-3.5-Bolt-E4B-Q4_K_M | 6,18 Go | MoE 7,52 B (4 B actifs), ~6,5 Gio nécessaires pour 7,2 dispo |
 
-Avec les 4 modèles retenus, la RAM utilisée plafonne à ~4,1 Gio (le plus gros fait
-3,54 Go) : aucun risque de pagination.
+Avec les 4 modèles retenus, la RAM utilisée plafonne à ~4,1 Gio en bench classique
+(ctx 4096) et ~4,9 Gio pendant l'épreuve web (ctx 8192), pour 7,2 Gio disponibles :
+aucun risque de pagination.
+
+## Résultats de la campagne
+
+i5-8500 (6 threads), ctx 4096, llama.cpp `v0.7.0`, quantization Q4_K_M.
+
+| Modèle | Params | pp tok/s | tg tok/s | TTFT | QCM (soft) | QCM (juste) | Gén. | Page web |
+|---|---|---|---|---|---|---|---|---|
+| **Qwen3.5-4B** | 4,21 B | 54,2 | 9,2 | 685 ms | **79 %** | 82 % | **100 %** | 80/100 |
+| Spark-X2.6-4B | 4,45 B | 53,0 | 10,1 | 739 ms | 69 % | 68 % | 83 % | 85/100 |
+| Qwen3.5-2B | 1,88 B | 134,7 | 18,9 | 255 ms | 63 % | 75 % | 83 % | 85/100 ⚠ |
+| Qwen3.5-0.8B | 0,75 B | 272,0 | 35,8 | 151 ms | 50 % | 70 % | 83 % | **100/100** |
+
+Lecture rapide :
+
+- **Qwen3.5-4B** : le meilleur de la sélection, seul modèle à 100 % sur les tâches
+  génératives. 9 tok/s : très bien pour du batch, lent pour du chat interactif.
+- **Qwen3.5-2B** : 2× plus rapide, 63 % de QCM — le compromis pour un usage interactif.
+- **Qwen3.5-0.8B** : excellent débit, raisonnement faible (50 %) et biais de position
+  marqué (0,39 contre 0,25 neutre) : à réserver au triage et au formatage.
+- **Spark-X2.6-4B** : aussi rapide que le 4B Qwen mais moins juste ; son tokenizer
+  produit ~34 % de tokens en plus pour le même texte, donc son débit *réel* est
+  inférieur malgré les 10,1 tok/s affichés.
+
+Le score « page web » est structurel, pas esthétique (voir la section dédiée) :
+le 2B (⚠) n'a pas terminé sa page dans le budget de tokens.
+
+Détail complet : [`results/summary.md`](results/summary.md) · données brutes :
+[`results/results.jsonl`](results/results.jsonl) · pages générées :
+[`results/web/index.html`](results/web/index.html).
 
 ## Ce que mesure le script
 
@@ -208,6 +253,19 @@ Console et `results/run.log` :
 [15:07:40]     terminé en 103 s
 ```
 
+En `--mode web`, la boucle est plus courte (pas de QCM, pas de tâches génératives) :
+
+```
+[17:19:27] [1/4] Qwen3.5-0.8B-Q4_K_M.gguf
+[17:19:27]     qwen35 · Q4_K_M · 0.75 B · 0.53 Go · ctx 8192
+[17:19:30]     serveur prêt en 2.5 s (n_ctx=8192)
+[17:19:30]     page web : génération (max 4500 tokens)
+[17:20:30]     page web : 7.5 Ko · 199 lignes · score technique 100/100 · 37.0 tok/s (63 s)
+```
+
+Une page coupée faute de budget affiche `⚠ page incomplète` et reste marquée comme
+telle dans la galerie et le classement.
+
 Tableau de bord `http://<ip>:8080/` (rafraîchi toutes les 3 s, sans recharger la page) :
 
 - bandeau d'état : modèle en cours, phase (`chargement` → `vitesse` → `QCM` →
@@ -224,7 +282,7 @@ Tableau de bord `http://<ip>:8080/` (rafraîchi toutes les 3 s, sans recharger l
 
 ```
 results/
-  results.jsonl   # une ligne par modèle (complet, avec détail QCM/gén.)
+  results.jsonl   # une ligne par modèle (vitesse, QCM, génératif, page web)
   results.csv     # tableau plat, prêt pour LibreOffice/pandas
   summary.md      # classement lisible
   state.json      # état temps réel (utilisé par le tableau de bord)
@@ -242,5 +300,7 @@ results/
   deux modèles à 3 points d'écart.
 - Les tâches génératives sont auto-notées par des règles simples (premier nombre,
   JSON, assertions) : une réponse juste formulée autrement peut être comptée fausse.
+- Épreuve web : une seule génération par modèle (`temperature 0`), donc aucune mesure
+  de variance ; le score technique ne juge pas l'esthétique, seulement la structure.
 - ⚠️ Le test de code **exécute du Python produit par le modèle** (sous-processus,
   20 s max, sans bac à sable). À ne lancer que sur une machine de bench.
