@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pages web générées — comparaison</title>
+<style>
+:root{--bg:#0f1115;--fg:#e7e9ee;--muted:#9aa3b2;--card:#171a21;--line:#262b36;--acc:#4da3ff}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:var(--bg);color:var(--fg);
+font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0}
+.sub,.note{color:var(--muted);font-size:13px}
+.note{margin:8px 0 20px;max-width:80ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+display:flex;flex-direction:column}
+.card header{padding:12px 14px;border-bottom:1px solid var(--line)}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.badge{font-size:11px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;
+color:var(--muted)}
+iframe{width:100%;height:560px;border:0;background:#fff;flex:1}
+.card footer{display:flex;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--line);
+font-size:12px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+</style></head><body>
+<h1>Pages web générées <span class="sub">même consigne, même modèle llama.cpp</span></h1>
+<p class="note">Même prompt pour tous les modèles (« Nocturne », landing page mono-fichier).
+Les iframes sont isolées (<code>sandbox</code>) : le JavaScript de chaque page ne peut pas
+toucher au reste de la galerie. Le score « technique » mesure l'autonomie et la
+structure, <strong>pas</strong> l'esthétique — celle-ci se juge à l'œil.</p>
+<div class="grid"><section class='card'><header><h2>Qwen3.5-0.8B-Q4_K_M.gguf</h2><div class='badges'><span class='badge'>100/100 technique</span><span class='badge'>8 Ko</span><span class='badge'>199 lignes</span><span class='badge'>1 @media</span><span class='badge'>1 listener(s)</span></div></header><iframe src='Qwen3.5-0.8B-Q4_K_M.html' sandbox='allow-scripts allow-forms allow-modals allow-popups' loading='lazy' title='Qwen3.5-0.8B-Q4_K_M'></iframe><footer><a href='Qwen3.5-0.8B-Q4_K_M.html' target='_blank' rel='noopener'>ouvrir en plein écran</a><a href='Qwen3.5-0.8B-Q4_K_M.answer.md' target='_blank' rel='noopener'>réponse brute</a></footer></section><section class='card'><header><h2>Qwen3.5-2B-Q4_K_M.gguf</h2><div class='badges'><span class='badge'>85/100 technique</span><span class='badge'>17 Ko</span><span class='badge'>465 lignes</span><span class='badge'>1 @media</span><span class='badge'>1 listener(s)</span><span class='badge'>⚠ page incomplète</span></div></header><iframe src='Qwen3.5-2B-Q4_K_M.html' sandbox='allow-scripts allow-forms allow-modals allow-popups' loading='lazy' title='Qwen3.5-2B-Q4_K_M'></iframe><footer><a href='Qwen3.5-2B-Q4_K_M.html' target='_blank' rel='noopener'>ouvrir en plein écran</a><a href='Qwen3.5-2B-Q4_K_M.answer.md' target='_blank' rel='noopener'>réponse brute</a></footer></section><section class='card'><header><h2>Spark-X2.6-4B-Q4_K_M.gguf</h2><div class='badges'><span class='badge'>85/100 technique</span><span class='badge'>12 Ko</span><span class='badge'>501 lignes</span><span class='badge'>1 @media</span><span class='badge'>4 listener(s)</span></div></header><iframe src='Spark-X2.6-4B-Q4_K_M.html' sandbox='allow-scripts allow-forms allow-modals allow-popups' loading='lazy' title='Spark-X2.6-4B-Q4_K_M'></iframe><footer><a href='Spark-X2.6-4B-Q4_K_M.html' target='_blank' rel='noopener'>ouvrir en plein écran</a><a href='Spark-X2.6-4B-Q4_K_M.answer.md' target='_blank' rel='noopener'>réponse brute</a></footer></section><section class='card'><header><h2>Qwen3.5-4B-Q4_K_M.gguf</h2><div class='badges'><span class='badge'>80/100 technique</span><span class='badge'>11 Ko</span><span class='badge'>294 lignes</span><span class='badge'>0 @media</span><span class='badge'>0 listener(s)</span></div></header><iframe src='Qwen3.5-4B-Q4_K_M.html' sandbox='allow-scripts allow-forms allow-modals allow-popups' loading='lazy' title='Qwen3.5-4B-Q4_K_M'></iframe><footer><a href='Qwen3.5-4B-Q4_K_M.html' target='_blank' rel='noopener'>ouvrir en plein écran</a><a href='Qwen3.5-4B-Q4_K_M.answer.md' target='_blank' rel='noopener'>réponse brute</a></footer></section></div>
+</body></html>

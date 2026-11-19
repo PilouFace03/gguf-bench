@@ -1,0 +1,215 @@
+# web-landing — réponse brute
+
+## Consigne
+Build a single-file landing page for a fictional product: "Nocturne", an app that helps people fall asleep faster by generating personalised evening routines.
+
+Hard constraints:
+- ONE .html file. All CSS in a <style> tag, all JS in a <script> tag. No external file, no CDN, no framework, no web font, no image URL.
+- Must start with <!doctype html> and end with </html>. The file MUST be complete: never stop before </html>.
+- Responsive: usable at 375px wide and at 1440px.
+- Include: a hero section with a headline and a call-to-action button, exactly 3 feature cards, and at least one genuinely interactive element in vanilla JS (e.g. a working toggle, tab switcher, or form with validation).
+- Stay compact: aim for 250-350 lines total. Prefer dense, idiomatic CSS over repetition and over-commented code.
+
+Quality bar: this page will be judged side by side against other models on visual design only. Make deliberate choices: a coherent palette, a real type scale, spacing that breathes, a clear visual hierarchy, tasteful hover/focus states. Avoid generic bootstrap-looking output.
+
+Return ONLY the HTML code. No markdown fence, no explanation, no comments about your choices.
+
+## Réponse brute
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturne | Personalized Sleep</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --radius: 12px;
+            --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        
+        /* Typography */
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; margin-bottom: 1rem; }
+        h1 { font-size: 3.5rem; line-height: 1.1; }
+        h2 { font-size: 2rem; color: var(--primary); margin: 3rem 0 1rem; }
+        h3 { font-size: 1.25rem; color: var(--text-muted); margin: 1rem 0 0; }
+        p { margin-bottom: 1.5rem; color: var(--text-muted); max-width: 600px; }
+
+        /* Layout */
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        .grid { display: grid; gap: 2rem; }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+        /* Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: none;
+            font-family: inherit;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-outline { border: 1px solid var(--border); color: var(--text); background: transparent; }
+        .btn-outline:hover { background: var(--surface); color: var(--primary); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Hero */
+        .hero { padding: 100px 0; text-align: center; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+        .hero-btn {
+            background: var(--primary);
+            color: white;
+            font-size: 1.1rem;
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            display: inline-block;
+            margin-top: 2rem;
+        }
+
+        /* Features */
+        .features { padding: 60px 0; }
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: var(--radius);
+            transition: transform 0.2s ease;
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .feature-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* Interactive Element */
+        .interactive {
+            padding: 4rem 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .toggle-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .toggle-btn:hover { transform: scale(1.05); }
+
+        /* Footer */
+        footer { padding: 4rem 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 0.875rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .hero { padding: 60px 0; }
+            .hero h1 { font-size: 2rem; }
+            .btn { padding: 10px 20px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nocturne</h1>
+            <p>Personalized evening routines designed to help you fall asleep faster.</p>
+            <a href="#features" class="btn btn-primary">Start Your Routine</a>
+        </header>
+
+        <section id="features" class="features">
+            <div class="grid grid-cols-3">
+                <div class="feature-card">
+                    <span class="feature-icon">🌙</span>
+                    <h3>Smart Scheduling</h3>
+                    <p>Our AI analyzes your sleep history and creates a personalized bedtime routine tailored to your specific needs.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔋</span>
+                    <h3>Smart Scheduling</h3>
+                    <p>Our AI analyzes your sleep history and creates a personalized bedtime routine tailored to your specific needs.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔋</span>
+                    <h3>Smart Scheduling</h3>
+                    <p>Our AI analyzes your sleep history and creates a personalized bedtime routine tailored to your specific needs.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="interactive">
+            <h2>How It Works</h2>
+            <p>Enter your current sleep schedule and we'll build a custom plan for you.</p>
+            
+            <div class="toggle-container">
+                <button class="toggle-btn active">Today</button>
+                <button class="toggle-btn">Tomorrow</button>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                <strong>Tip:</strong> This is a demo. To test the toggle, click "Today" and "Tomorrow" in the interactive section.
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Nocturne Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Simple interaction logic for the toggle
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+        
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Toggle class to simulate active state
+                btn.classList.toggle('active');
+                
+                // Update text
+                const text = btn.innerText;
+                if (btn.classList.contains('active')) {
+                    text = "Tomorrow";
+                } else {
+                    text = "Today";
+                }
+                btn.innerText = text;
+            });
+        });
+    </script>
+</body>
+</html>

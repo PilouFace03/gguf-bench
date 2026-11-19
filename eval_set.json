@@ -4,6 +4,7 @@
     "mcq_system_fr": "Tu es un assistant rigoureux. Réponds uniquement par la lettre de la bonne réponse : A, B, C ou D. N'écris rien d'autre.",
     "mcq_system_en": "You are a rigorous assistant. Answer only with the letter of the correct choice: A, B, C or D. Write nothing else.",
     "gen_system": "Tu es un assistant utile et concis. Respecte strictement le format demandé.",
+    "web_system": "You are a senior front-end developer. Output only the requested file, nothing else.",
     "mcq_idle_tokens": 1,
     "mcq_fallback_tokens": 48
   },
@@ -283,5 +284,14 @@
       "prompt": "List exactly 5 bullet points, each starting with « - » and containing at most 8 words, about the benefits of sleep. No introduction, no conclusion, no extra text.",
       "check": {"type": "bullets", "count": 5, "max_words": 8}
     }
-  ]
+  ],
+  "web": {
+    "id": "web-landing",
+    "cat": "front-end",
+    "ctx": 8192,
+    "max_tokens": 4500,
+    "timeout": 1800,
+    "prompt": "Build a single-file landing page for a fictional product: \"Nocturne\", an app that helps people fall asleep faster by generating personalised evening routines.\n\nHard constraints:\n- ONE .html file. All CSS in a <style> tag, all JS in a <script> tag. No external file, no CDN, no framework, no web font, no image URL.\n- Must start with <!doctype html> and end with </html>. The file MUST be complete: never stop before </html>.\n- Responsive: usable at 375px wide and at 1440px.\n- Include: a hero section with a headline and a call-to-action button, exactly 3 feature cards, and at least one genuinely interactive element in vanilla JS (e.g. a working toggle, tab switcher, or form with validation).\n- Stay compact: aim for 250-350 lines total. Prefer dense, idiomatic CSS over repetition and over-commented code.\n\nQuality bar: this page will be judged side by side against other models on visual design only. Make deliberate choices: a coherent palette, a real type scale, spacing that breathes, a clear visual hierarchy, tasteful hover/focus states. Avoid generic bootstrap-looking output.\n\nReturn ONLY the HTML code. No markdown fence, no explanation, no comments about your choices.",
+    "check": {"type": "html"}
+  }
 }

@@ -34,6 +34,7 @@ import sys
 import tempfile
 import threading
 import time
+from html.parser import HTMLParser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -897,6 +898,222 @@ def run_gen(srv, tasks, defaults, timeout, raw_dir, progress=None):
     }
 
 
+# --- épreuve « page web » ----------------------------------------------------
+
+VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+             "meta", "param", "source", "track", "wbr"}
+
+
+class _TagBalance(HTMLParser):
+    """Contrôle grossier de l'équilibre des balises (HTMLParser, pas de dépendance)."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack = []
+        self.errors = 0
+
+    def handle_starttag(self, tag, attrs):  # noqa: ARG002
+        if tag not in VOID_TAGS:
+            self.stack.append(tag)
+
+    def handle_endtag(self, tag):
+        if tag in VOID_TAGS:
+            return
+        if tag in self.stack:
+            while self.stack and self.stack[-1] != tag:
+                self.stack.pop()
+                self.errors += 1
+            if self.stack:
+                self.stack.pop()
+        else:
+            self.errors += 1
+
+
+def extract_html(text):
+    """Extrait le document HTML d'une réponse qui peut contenir du markdown."""
+    t = text or ""
+    t = re.sub(r"^\s*```[a-zA-Z]*\s*", "", t)
+    t = re.sub(r"\s*```\s*$", "", t)
+    m = re.search(r"<!doctype\s+html", t, re.IGNORECASE)
+    if m:
+        t = t[m.start():]
+    else:
+        m = re.search(r"<html[\s>]", t, re.IGNORECASE)
+        if m:
+            t = t[m.start():]
+    end = t.lower().rfind("</html>")
+    if end >= 0:
+        t = t[:end + len("</html>")]
+    return t.strip() + "\n"
+
+
+def analyze_html(html_text):
+    """Mesures **structurelles** de la page (l'esthétique se juge à l'œil).
+
+    Le score « technique » (0-100) ne dit rien de la beauté : il vérifie que la
+    page est autonome, responsive, interactive et syntaxiquement plausible.
+    """
+    low = html_text.lower()
+    bal = _TagBalance()
+    try:
+        bal.feed(html_text)
+        bal.close()
+    except Exception:  # noqa: BLE001
+        pass
+    unbalanced = len(bal.stack) + bal.errors
+
+    external = re.findall(r"(?:src|href)\s*=\s*[\"']\s*(?:https?:)?//", low)
+    media = low.count("@media")
+    css_vars = len(set(re.findall(r"--[a-z0-9_-]+\s*:", low)))
+    layout = (low.count("display:flex") + low.count("display: flex")
+              + low.count("display:grid") + low.count("display: grid"))
+    listeners = low.count("addeventlistener")
+
+    m = {
+        "bytes": len(html_text.encode("utf-8")),
+        "lines": html_text.count("\n") + 1,
+        "doctype": low.lstrip().startswith("<!doctype"),
+        "style_tag": "<style" in low,
+        "script_tag": "<script" in low,
+        "external_refs": len(external),
+        "no_external": not external,
+        "viewport": 'name="viewport"' in low or "name='viewport'" in low,
+        "media_queries": media,
+        "css_vars": css_vars,
+        "layout": layout > 0,
+        "js_listeners": listeners,
+        "lang": bool(re.search(r"<html[^>]*\blang\s*=", low)),
+        "img_no_alt": len(re.findall(r"<img\b(?![^>]*\balt=)", low)),
+        "unbalanced": unbalanced,
+    }
+    score = 0
+    score += 5 if m["doctype"] else 0
+    score += 10 if m["style_tag"] else 0
+    score += 10 if m["script_tag"] else 0
+    score += 15 if m["no_external"] else 0
+    score += 15 if unbalanced == 0 else 0
+    score += 10 if m["viewport"] else 0
+    score += 10 if media else 0
+    score += 5 if css_vars else 0
+    score += 10 if m["layout"] else 0
+    score += 10 if listeners else 0
+    m["technique"] = score
+    return m
+
+
+def run_web(srv, spec, defaults, timeout, web_dir, stem):
+    """Génère la page HTML demandée et l'écrit dans results/web/<stem>.html."""
+    web_dir.mkdir(parents=True, exist_ok=True)
+    t0 = time.time()
+    body = {
+        "messages": [
+            {"role": "system", "content": defaults.get("web_system", defaults["gen_system"])},
+            {"role": "user", "content": spec["prompt"]},
+        ],
+        "max_tokens": spec.get("max_tokens", 2800),
+        "temperature": 0,
+        "top_k": 1,
+        "chat_template_kwargs": {"enable_thinking": False},
+    }
+    r = srv.post("/v1/chat/completions", body, timeout=spec.get("timeout", timeout))
+    raw = (r["choices"][0]["message"].get("content") or "")
+    timings = r.get("timings") or {}
+
+    html_text = extract_html(raw)
+    (web_dir / f"{stem}.html").write_text(html_text, encoding="utf-8")
+    (web_dir / f"{stem}.answer.md").write_text(
+        f"# {spec.get('id', 'web')} — réponse brute\n\n## Consigne\n{spec['prompt']}\n\n"
+        f"## Réponse brute\n{raw}\n", encoding="utf-8")
+
+    metrics = analyze_html(html_text)
+    max_tokens = spec.get("max_tokens", 2800)
+    predicted = timings.get("predicted_n") or 0
+    metrics.update({
+        "ok": True,
+        "file": f"web/{stem}.html",
+        "chars": len(html_text),
+        "tok_s": round(timings.get("predicted_per_second") or 0, 2),
+        "predicted_n": predicted,
+        "truncated": predicted >= max_tokens - 1,
+        "incomplete": "</html>" not in html_text.lower(),
+        "elapsed_s": round(time.time() - t0, 1),
+    })
+    return metrics
+
+
+def write_web_gallery(out_dir, rows):
+    """Galerie de comparaison : les pages générées côte à côte (iframes isolées)."""
+    web_dir = Path(out_dir) / "web"
+    web_dir.mkdir(parents=True, exist_ok=True)
+    items = []
+    for r in rows:
+        w = r.get("web") or {}
+        if not w.get("ok"):
+            continue
+        items.append((r, w))
+    items.sort(key=lambda rw: rw[1].get("technique", 0), reverse=True)
+
+    cards = []
+    for r, w in items:
+        stem = Path(str(r.get("model"))).stem
+        badges = [
+            f"{w.get('technique', 0)}/100 technique",
+            f"{w.get('bytes', 0) / 1024:.0f} Ko",
+            f"{w.get('lines', 0)} lignes",
+            f"{w.get('media_queries', 0)} @media",
+            f"{w.get('js_listeners', 0)} listener(s)",
+        ]
+        if w.get("external_refs"):
+            badges.append(f"{w['external_refs']} ressource(s) externe(s)")
+        if w.get("incomplete"):
+            badges.append("⚠ page incomplète")
+        badge_html = "".join(f"<span class='badge'>{html.escape(str(b))}</span>" for b in badges)
+        cards.append(
+            f"<section class='card'><header><h2>{html.escape(str(r.get('model')))}</h2>"
+            f"<div class='badges'>{badge_html}</div></header>"
+            f"<iframe src='{html.escape(stem)}.html' sandbox='allow-scripts allow-forms "
+            f"allow-modals allow-popups' loading='lazy' title='{html.escape(stem)}'></iframe>"
+            f"<footer><a href='{html.escape(stem)}.html' target='_blank' rel='noopener'>"
+            f"ouvrir en plein écran</a>"
+            f"<a href='{html.escape(stem)}.answer.md' target='_blank' rel='noopener'>réponse brute</a>"
+            f"</footer></section>")
+
+    doc = f"""<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pages web générées — comparaison</title>
+<style>
+:root{{--bg:#0f1115;--fg:#e7e9ee;--muted:#9aa3b2;--card:#171a21;--line:#262b36;--acc:#4da3ff}}
+*{{box-sizing:border-box}}
+body{{margin:0;padding:24px;background:var(--bg);color:var(--fg);
+font:14px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}}
+h1{{font-size:20px;margin:0 0 4px}}h2{{font-size:15px;margin:0}}
+.sub,.note{{color:var(--muted);font-size:13px}}
+.note{{margin:8px 0 20px;max-width:80ch}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px}}
+.card{{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+display:flex;flex-direction:column}}
+.card header{{padding:12px 14px;border-bottom:1px solid var(--line)}}
+.badges{{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}}
+.badge{{font-size:11px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;
+color:var(--muted)}}
+iframe{{width:100%;height:560px;border:0;background:#fff;flex:1}}
+.card footer{{display:flex;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--line);
+font-size:12px}}
+a{{color:var(--acc);text-decoration:none}}a:hover{{text-decoration:underline}}
+</style></head><body>
+<h1>Pages web générées <span class="sub">même consigne, même modèle llama.cpp</span></h1>
+<p class="note">Même prompt pour tous les modèles (« Nocturne », landing page mono-fichier).
+Les iframes sont isolées (<code>sandbox</code>) : le JavaScript de chaque page ne peut pas
+toucher au reste de la galerie. Le score « technique » mesure l'autonomie et la
+structure, <strong>pas</strong> l'esthétique — celle-ci se juge à l'œil.</p>
+<div class="grid">{''.join(cards) or "<p class='note'>Aucune page générée pour l'instant.</p>"}</div>
+</body></html>
+"""
+    (web_dir / "index.html").write_text(doc, encoding="utf-8")
+    return web_dir / "index.html"
+
+
 # ----------------------------------------------------------------------------
 # Boucle principale
 # ----------------------------------------------------------------------------
@@ -921,6 +1138,9 @@ def bench_model(path, args, eval_set, server_flags, idx=1, total=1):
     avail = mem_available_gib()
 
     ctx = args.ctx
+    if args.mode in ("all", "web"):
+        # l'épreuve web produit un fichier long : elle a droit à son propre ctx
+        ctx = max(ctx, int(((eval_set.get("web") or {}).get("ctx")) or 0))
     need = size_bytes / 2**30 + meta.kv_cache_bytes(ctx) / 2**30 + 0.45
     # garde-fou : si ça ne tient pas, on réduit le contexte (jamais le ctx natif)
     if need > avail * 0.95 and ctx > 2048:
@@ -1005,6 +1225,24 @@ def bench_model(path, args, eval_set, server_flags, idx=1, total=1):
             log(f"    qualité : QCM {row['mcq_soft']:.0%} (juste {row['mcq_acc']:.0%}) · "
                 f"génératif {row['gen_score']:.0%}")
 
+        if args.mode in ("all", "web"):
+            spec = eval_set.get("web")
+            if not spec:
+                log("    (épreuve « page web » absente de eval_set.json, ignorée)")
+            else:
+                set_state(phase="page web", detail=f"0/{spec.get('max_tokens', 2800)} tokens")
+                log(f"    page web : génération (max {spec.get('max_tokens', 2800)} tokens)")
+                web = run_web(srv, spec, eval_set["defaults"], args.timeout,
+                              Path(args.out) / "web", Path(name).stem)
+                web["ctx"] = ctx
+                row["web"] = web
+                log(f"    page web : {web['bytes'] / 1024:.1f} Ko · {web['lines']} lignes · "
+                    f"score technique {web['technique']}/100 · {web['tok_s']} tok/s "
+                    f"({web['elapsed_s']:.0f} s)")
+                if web.get("incomplete"):
+                    log(f"    ⚠ page incomplète ({web.get('predicted_n')} tokens) : "
+                        f"relancer avec un budget plus large")
+
         row["status"] = "ok"
         set_state(phase="terminé", detail="")
     except Exception as exc:  # noqa: BLE001
@@ -1042,12 +1280,24 @@ def write_outputs(out_dir, rows):
     cols = ["model", "arch", "params_b", "quant", "size_gb", "ctx", "n_ctx_server",
             "threads", "load_s", "pp_tok_s", "pp_prompt_n", "tg_tok_s", "tg_tokens",
             "ttft_ms", "stream_tok_s", "mcq_soft", "mcq_acc", "mcq_coverage",
-            "mcq_bias", "gen_score", "status", "error", "ts"]
+            "mcq_bias", "gen_score", "web_score", "web_kb", "web_lines",
+            "web_media", "web_js", "web_external", "web_tok_s", "web_file",
+            "status", "error", "ts"]
     with open(out_dir / "results.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")
         w.writeheader()
         for r in rows:
-            w.writerow(r)
+            flat = dict(r)
+            web = r.get("web") or {}
+            flat["web_score"] = web.get("technique")
+            flat["web_kb"] = round(web["bytes"] / 1024, 1) if web.get("bytes") else None
+            flat["web_lines"] = web.get("lines")
+            flat["web_media"] = web.get("media_queries")
+            flat["web_js"] = web.get("js_listeners")
+            flat["web_external"] = web.get("external_refs")
+            flat["web_tok_s"] = web.get("tok_s")
+            flat["web_file"] = web.get("file")
+            w.writerow(flat)
 
     def f(v, nd=1):
         return "—" if v is None else (f"{v:.{nd}f}" if isinstance(v, float) else str(v))
@@ -1078,6 +1328,26 @@ def write_outputs(out_dir, rows):
         for r in bad:
             lines.append(f"| {r['model']} | {r['status']} | {(r.get('error') or '').splitlines()[0][:160]} |")
         lines += [""]
+
+    web_rows = [(r, r["web"]) for r in rows if (r.get("web") or {}).get("ok")]
+    if web_rows:
+        web_rows.sort(key=lambda rw: rw[1].get("technique", 0), reverse=True)
+        lines += ["## Épreuve « page web »", "",
+                  "Même consigne pour tous (landing page mono-fichier). Le score est",
+                  "**structurel** (autonomie, responsive, interactivité) : l'esthétique se",
+                  "juge à l'œil dans [`web/index.html`](web/index.html).", "",
+                  "| Modèle | Score tech. | Taille | Lignes | @media | Listeners JS | Ress. ext. | Page |",
+                  "|---|---|---|---|---|---|---|---|"]
+        for r, w in web_rows:
+            stem = Path(str(r.get("model"))).stem
+            flag = " ⚠ incomplète" if w.get("incomplete") else ""
+            lines.append(
+                f"| {r['model']} | {w.get('technique', 0)}/100 | "
+                f"{w.get('bytes', 0) / 1024:.1f} Ko{flag} | {w.get('lines', 0)} | "
+                f"{w.get('media_queries', 0)} | {w.get('js_listeners', 0)} | "
+                f"{w.get('external_refs', 0)} | [`{stem}.html`](web/{stem}.html) |")
+        lines += [""]
+
     lines += ["## Rappel méthodo", "",
               "- `pp` = préfill (tok/s d'ingestion du prompt), `tg` = génération (tok/s).",
               "- 3 répétitions, médiane ; `temperature 0`, même `ctx` et même `-t` pour tous.",
@@ -1086,8 +1356,12 @@ def write_outputs(out_dir, rows):
               "  accordée à la bonne réponse, « juste » = choix le plus probable.",
               "- `biais pos.` = probabilité moyenne donnée à la première proposition (0,25 = neutre).",
               "- Gén. : 6 tâches, auto-scoring ; les réponses brutes sont dans `raw/`.",
+              "- Page web : score technique = autonomie (aucune ressource externe), balises",
+              "  équilibrées, viewport, @media, variables CSS, flex/grid, JS interactif.",
+              "  Il ne mesure pas l'esthétique : comparer visuellement via `web/index.html`.",
               ""]
     (out_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")
+    write_web_gallery(out_dir, rows)
 
 
 # ----------------------------------------------------------------------------
@@ -1140,6 +1414,16 @@ def _num(v, nd=1, unit=""):
     if v is None:
         return "<span class='k'>—</span>"
     return f"{v:.{nd}f}{unit}"
+
+
+def _web_line(row, out_dir, stem):
+    w = row.get("web") or {}
+    if not w.get("ok"):
+        return ""
+    return (f"<div class='k' style='margin-top:4px'>page web : "
+            f"<a href='/web/{html.escape(stem)}.html' target='_blank' rel='noopener'>"
+            f"{html.escape(stem)}.html</a> · score technique {w.get('technique', 0)}/100 · "
+            f"{w.get('bytes', 0) / 1024:.1f} Ko · {w.get('lines', 0)} lignes</div>")
 
 
 def read_state(out_dir):
@@ -1207,9 +1491,11 @@ def results_fragment(out_dir):
     out = ["<div class='card'><table><thead><tr>"
            "<th>Modèle</th><th>Params</th><th>Quant</th><th>ctx</th>"
            "<th>préfill</th><th>génération</th><th>TTFT</th><th>QCM</th><th>juste</th>"
-           "<th>génératif</th></tr></thead><tbody>"]
+           "<th>génératif</th><th>page web</th></tr></thead><tbody>"]
     for r in ok:
         name = html.escape(str(r.get("model")))
+        web = r.get("web") or {}
+        web_cell = _bar(web.get("technique", 0) / 100) if web.get("ok") else "<span class='k'>—</span>"
         out.append(
             f"<tr><td>{name}</td>"
             f"<td>{_num(r.get('params_b'), 2)} B</td>"
@@ -1220,7 +1506,8 @@ def results_fragment(out_dir):
             f"<td>{_num(r.get('ttft_ms'), 0)} ms</td>"
             f"<td>{_bar(r.get('mcq_soft'))}</td>"
             f"<td>{_bar(r.get('mcq_acc'))}</td>"
-            f"<td>{_bar(r.get('gen_score'))}</td></tr>")
+            f"<td>{_bar(r.get('gen_score'))}</td>"
+            f"<td>{web_cell}</td></tr>")
     out.append("</tbody></table>")
 
     # diagnostic détaillé, modèle par modèle
@@ -1252,6 +1539,7 @@ def results_fragment(out_dir):
             f"<div><div class='k'>Tâches génératives</div>{gen_html or '—'}</div></div>"
             f"<div class='k' style='margin-top:8px'>biais de position : "
             f"{_num(r.get('mcq_bias'), 2)} · couverture : {_num(r.get('mcq_coverage'), 2)}</div>"
+            f"{_web_line(r, out_dir, stem)}"
             f"<div class='k' style='margin-top:6px'>fichiers : {files or '—'}</div></details>")
     out.append("</div>")
     return "".join(out)
@@ -1262,6 +1550,7 @@ def render_page(out_dir):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bench GGUF</title><style>{CSS}</style></head><body>
 <h1>Benchmark GGUF <span class="sub">llama.cpp · CPU</span></h1>
+<p style="margin:0 0 8px"><a href="/web/" target="_blank" rel="noopener">→ pages web générées</a></p>
 <div id="status">{status_fragment(out_dir)}</div>
 <div id="results">{results_fragment(out_dir)}</div>
 <div class="card"><div class="k" style="margin-bottom:8px">journal d'exécution</div>
@@ -1317,6 +1606,22 @@ def make_handler(out_dir):
                     self._send(200, f.read_bytes(), "text/csv; charset=utf-8")
                 else:
                     self._send(404, "pas encore de résultats")
+            elif path in ("/web", "/web/"):
+                f = root / "web" / "index.html"
+                if f.is_file():
+                    self._send(200, f.read_bytes())
+                else:
+                    self._send(404, "aucune page web générée")
+            elif path.startswith("/web/"):
+                web_root = (root / "web").resolve()
+                f = (root / path.lstrip("/")).resolve()
+                if str(f).startswith(str(web_root)) and f.is_file():
+                    ctype = "text/html; charset=utf-8"
+                    if f.suffix == ".md":
+                        ctype = "text/plain; charset=utf-8"
+                    self._send(200, f.read_bytes(), ctype)
+                else:
+                    self._send(404, "fichier introuvable")
             elif path.startswith("/raw/"):
                 f = (root / path.lstrip("/")).resolve()
                 if str(f).startswith(str(root)) and f.is_file():
@@ -1372,7 +1677,8 @@ def main():
     ap.add_argument("--rotations", type=int, default=4,
                     help="permutations des choix au QCM (4 = biais de position neutralisé)")
     ap.add_argument("--timeout", type=int, default=900, help="timeout par requête (s)")
-    ap.add_argument("--mode", choices=["all", "speed", "eval"], default="all")
+    ap.add_argument("--mode", choices=["all", "speed", "eval", "web"], default="all",
+                    help="all = tout · speed · eval · web (uniquement l'épreuve page HTML)")
     ap.add_argument("--force", action="store_true", help="refaire les modèles déjà mesurés")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--list", action="store_true", help="lister les modèles et quitter")
@@ -1436,12 +1742,21 @@ def main():
     done = set()
     jsonl = out_dir / "results.jsonl"
     rows = []
-    if jsonl.exists() and not args.force:
+    if jsonl.exists():
         for line in jsonl.read_text(encoding="utf-8").splitlines():
             try:
                 e = json.loads(line)
                 rows.append(e)
-                if e.get("status") == "ok":
+                # --force relance la mesure mais ne doit pas effacer les autres
+                # résultats déjà présents (fusion en mode « web »)
+                if args.force:
+                    continue
+                # en mode « web », seuls les modèles ayant déjà une page sont sautés :
+                # les résultats de vitesse/QCM existants ne doivent pas être perdus
+                if args.mode == "web":
+                    if (e.get("web") or {}).get("ok"):
+                        done.add(e["model"])
+                elif e.get("status") == "ok":
                     done.add(e["model"])
             except json.JSONDecodeError:
                 pass
@@ -1465,7 +1780,8 @@ def main():
 
     for i, path in enumerate(models, 1):
         if path.name in done:
-            log(f"[{i}/{len(models)}] {path.name} — déjà mesuré, ignoré (--force pour refaire)")
+            quoi = "page web déjà générée" if args.mode == "web" else "déjà mesuré"
+            log(f"[{i}/{len(models)}] {path.name} — {quoi}, ignoré (--force pour refaire)")
             continue
         log(f"[{i}/{len(models)}] {path.name}")
         set_state(model=path.name, index=i, total=len(models), phase="démarrage",
@@ -1473,6 +1789,15 @@ def main():
         t0 = time.time()
         row = bench_model(path, args, eval_set, base_flags, i, len(models))
         row["elapsed_s"] = round(time.time() - t0, 1)
+        # en mode « web » on fusionne avec la ligne existante pour conserver
+        # les mesures de vitesse et de QCM déjà obtenues
+        prev = next((r for r in rows if r.get("model") == row["model"]), None)
+        if args.mode == "web" and prev:
+            merged = dict(prev)
+            merged["web"] = row.get("web")
+            merged["web_ts"] = row.get("ts")
+            merged["web_elapsed_s"] = row.get("elapsed_s")
+            row = merged
         rows = [r for r in rows if r.get("model") != row["model"]] + [row]
         write_outputs(out_dir, rows)
         if row["status"] == "ok":

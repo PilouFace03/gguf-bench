@@ -1,0 +1,484 @@
+# web-landing — réponse brute
+
+## Consigne
+Build a single-file landing page for a fictional product: "Nocturne", an app that helps people fall asleep faster by generating personalised evening routines.
+
+Hard constraints:
+- ONE .html file. All CSS in a <style> tag, all JS in a <script> tag. No external file, no CDN, no framework, no web font, no image URL.
+- Must start with <!doctype html> and end with </html>. The file MUST be complete: never stop before </html>.
+- Responsive: usable at 375px wide and at 1440px.
+- Include: a hero section with a headline and a call-to-action button, exactly 3 feature cards, and at least one genuinely interactive element in vanilla JS (e.g. a working toggle, tab switcher, or form with validation).
+- Stay compact: aim for 250-350 lines total. Prefer dense, idiomatic CSS over repetition and over-commented code.
+
+Quality bar: this page will be judged side by side against other models on visual design only. Make deliberate choices: a coherent palette, a real type scale, spacing that breathes, a clear visual hierarchy, tasteful hover/focus states. Avoid generic bootstrap-looking output.
+
+Return ONLY the HTML code. No markdown fence, no explanation, no comments about your choices.
+
+## Réponse brute
+```html
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="html-5">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturne | Sleep Better</title>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --card-bg: #181b21;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius: 12px;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; letter-spacing: -0.02em; }
+        h2 { font-size: 2rem; }
+        p { color: var(--text-muted); margin-bottom: 1.5rem; }
+        
+        .highlight { color: var(--accent); }
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Layout */
+        header {
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            background: rgba(15, 17, 21, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.05em; }
+
+        /* Hero */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            background: radial-gradient(circle at top, #1e293b 0%, #0f1115 60%);
+        }
+
+        .hero h1 { margin-bottom: 20px; }
+        .hero p { max-width: 600px; margin: 0 auto 40px; }
+
+        /* Features */
+        .features { padding: 80px 0; }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-title { font-size: 1.25rem; margin-bottom: 10px; }
+        .feature-desc { font-size: 0.95rem; line-height: 1.5; }
+
+        /* Interactive Section */
+        .interactive-section {
+            padding: 80px 0;
+            background: #13161c;
+        }
+
+        .interactive-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .routine-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group.full-width { grid-column: span 2; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: #0f1115;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input { width: auto; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover { background: var(--accent-hover); }
+
+        /* Results Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-overlay.active .modal { transform: scale(1); }
+
+        .result-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f1115 100%);
+            padding: 30px;
+            border-radius: var(--radius);
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-card h3 { color: var(--success); margin-bottom: 10px; }
+        .result-card p { color: var(--text-muted); margin-bottom: 20px; }
+
+        .close-btn {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .close-btn:hover { background: var(--text-muted); color: white; border-color: var(--text-muted); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .routine-form { grid-template-columns: 1fr; }
+            .form-group.full-width { grid-column: span 1; }
+            h1 { font-size: 2rem; }
+            .hero { padding: 60px 0 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Nocturne.</div>
+                <a href="#features" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.9rem;">Learn</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Wake up feeling <span class="highlight">recharged</span>.</h1>
+                <p>Stop forcing yourself to sleep. Nocturne generates personalized evening routines based on your sleep history to optimize your rest.</p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <a href="#features" class="btn btn-primary">Start Free Trial</a>
+                    <a href="#demo" class="btn btn-outline">Watch Demo</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="text-center" style="margin-bottom: 40px;">
+                    <h2>Designed for <span class="highlight">Deep Rest</span></h2>
+                    <p>Generic advice doesn't work. We analyze your data to create a bespoke plan.</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="feature-title">Data-Driven</h3>
+                        <p class="feature-desc">We analyze your sleep logs to identify patterns. If you struggle with early risers, we prioritize morning light exposure.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <h3 class="feature-title">Cognitive Load</h3>
+                        <p class="feature-desc">We break complex tasks into micro-steps. No more "I need to clean the house"—just "Clean the kitchen."</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌙</div>
+                        <h3 class="feature-title">Biological Rhythms</h3>
+                        <p class="feature-desc">Our AI adjusts the intensity of your wind-down routine based on your circadian phase, not just time of day.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="interactive-section">
+            <div class="container">
+                <div class="text-center" style="margin-bottom: 40px;">
+                    <h2>Try the Generator</h2>
+                    <p>Enter your details to see what your perfect evening looks like.</p>
+                </div>
+
+                <div class="interactive-wrapper">
+                    <form id="routineForm" class="routine-form">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" placeholder="e.g. Alex" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" placeholder="e.g. 28" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sleepTime">Preferred Sleep Time</label>
+                            <select id="sleepTime">
+                                <option value="23:00">11 PM - 1 AM</option>
+                                <option value="22:00">10 PM - 11 PM</option>
+                                <option value="21:00">9 PM - 10 PM</option>
+                                <option value="20:00">8 PM - 9 PM</option>
+                                <option value="19:00">7 PM - 8 PM</option>
+                                <option value="18:00">6 PM - 7 PM</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goals">Top Goal</label>
+                            <select id="goals">
+                                <option value="light">Light Sleep</option>
+                                <option value="deep">Deep Sleep</option>
+                                <option value="early">Early Rise</option>
+                                <option value="late">Late Night</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="lighting">
+                                <span>Include Morning Light Exposure</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Generate Routine</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Results Modal -->
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal">
+            <h2 style="margin-bottom: 10px;">Your Perfect Evening</h2>
+            <div class="result-card">
+                <h3 id="modalTitle">Routine Title</h3>
+                <p id="modalDesc">Description goes here.</p>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                    <button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.9rem;">Save</button>
+                    <button class="btn btn-outline" style="padding: 8px 12px; font-size: 0.9rem;">Share</button>
+                </div>
+            </div>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Vanilla JS Logic
+        const form = document.getElementById('routineForm');
+        const modal = document.getElementById('resultModal');
+        const titleEl = document.getElementById('modalTitle');
+        const descEl = document.getElementById('modalDesc');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Simulate API call
+            const btn = form.querySelector('.submit-btn');
+            const originalText = btn.innerText;
+            btn.innerText = 'Analyzing...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Generate random but realistic data
+                const name = document.getElementById('name').value;
+                const age = document.getElementById('age').value;
+                const sleepTime = document.getElementById('sleepTime').value;
+                const goal = document.getElementById('goals').value;
+                const lighting = document.getElementById('lighting').checked;
+
+                // Generate a title based on goal
+                let title = "";
+                if(goal === 'light') title = "Morning Light & Deep Rest";
+                else if(goal === 'deep') title = "Midnight Deep Dive";
+                else if(goal === 'early') title = "Early Rise Protocol";
+                else title = "Late Night Wind Down";
+
+                // Generate description
+                let desc = "";
+                if(goal === 'light') desc = "Start with 15 mins of sunlight, then a 20-min meditation, followed by a 15-min light reading session. Total 50 mins.";
+                else if(goal === 'deep') desc = "Start with 10 mins of breathing, then 15 mins of reading, then 10 mins of stretching. Total 35 mins.";
+                else if(goal === 'early') desc = "Start with 15 mins of sunlight, then 20 mins of meditation, followed by a 15-min light reading session. Total 50 mins.";
+                else desc = "Start with 10 mins of breathing, then 15 mins of reading, then 10 mins of stretching. Total 35 mins.";
+
+                // Populate Modal
+                titleEl.innerText = title;
+                descEl.innerText = desc;
+
+                // Show Modal
+                modal.classList.add('active');
+
+                // Reset Form
+                form.reset();
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }, 1200);
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+       

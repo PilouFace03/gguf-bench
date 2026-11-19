@@ -1,0 +1,517 @@
+# web-landing — réponse brute
+
+## Consigne
+Build a single-file landing page for a fictional product: "Nocturne", an app that helps people fall asleep faster by generating personalised evening routines.
+
+Hard constraints:
+- ONE .html file. All CSS in a <style> tag, all JS in a <script> tag. No external file, no CDN, no framework, no web font, no image URL.
+- Must start with <!doctype html> and end with </html>. The file MUST be complete: never stop before </html>.
+- Responsive: usable at 375px wide and at 1440px.
+- Include: a hero section with a headline and a call-to-action button, exactly 3 feature cards, and at least one genuinely interactive element in vanilla JS (e.g. a working toggle, tab switcher, or form with validation).
+- Stay compact: aim for 250-350 lines total. Prefer dense, idiomatic CSS over repetition and over-commented code.
+
+Quality bar: this page will be judged side by side against other models on visual design only. Make deliberate choices: a coherent palette, a real type scale, spacing that breathes, a clear visual hierarchy, tasteful hover/focus states. Avoid generic bootstrap-looking output.
+
+Return ONLY the HTML code. No markdown fence, no explanation, no comments about your choices.
+
+## Réponse brute
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nocturne — Personalised Evening Routines</title>
+<style>
+  :root {
+    --bg: #0b0a14;
+    --surface: #141226;
+    --surface-2: #1c1938;
+    --accent: #8b7cff;
+    --accent-soft: #a79bff;
+    --text: #f4f2ff;
+    --text-muted: #a39fb8;
+    --border: rgba(139, 124, 255, 0.18);
+    --radius: 16px;
+    --maxw: 1120px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    color: var(--text);
+  }
+
+  .hero {
+    padding: 64px 0 48px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .hero p {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--text-muted);
+    max-width: 560px;
+    margin: 0 auto 32px;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 14px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 124, 255, 0.35);
+  }
+
+  .cta:focus-visible {
+    outline: 3px solid var(--accent-soft);
+    outline-offset: 3px;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 32px 0;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(139, 124, 255, 0.4);
+  }
+
+  .card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .interactive {
+    margin: 48px 0 0;
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .interactive h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .tab:hover {
+    color: var(--text);
+  }
+
+  .tab.active {
+    color: var(--accent-soft);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab:focus-visible {
+    outline: 3px solid var(--accent-soft);
+    outline-offset: -3px;
+  }
+
+  .routine-content {
+    display: none;
+    padding: 16px 0;
+  }
+
+  .routine-content.active {
+    display: block;
+    animation: fadeIn 0.25s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .routine-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .routine-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .routine-item .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .routine-item span {
+    font-size: 0.95rem;
+  }
+
+  .form {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .form-group input {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(139, 124, 255, 0.2);
+  }
+
+  .form-group input.invalid {
+    border-color: #ff6b6b;
+  }
+
+  .form-msg {
+    font-size: 0.85rem;
+    min-height: 1.2em;
+    color: #ff8a8a;
+  }
+
+  .form-msg.success {
+    color: #6ee7b7;
+  }
+
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .features {
+      grid-template-columns: 1fr;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .hero {
+      padding: 40px 0 32px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="brand">Nocturne</div>
+  <nav class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#routines">Routines</a>
+    <a href="#signup">Sign up</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>Fall asleep faster, every evening.</h1>
+    <p>Nocturne builds a personalised evening routine that calms your mind and helps you drift off naturally.</p>
+    <a href="#signup" class="cta">Start your routine
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </section>
+
+  <section id="features" class="features">
+    <article class="card">
+      <h3>Personalised routines</h3>
+      <p>Tailored evening plans that adapt to your sleep patterns and daily habits.</p>
+    </article>
+    <article class="card">
+      <h3>Calming soundscapes</h3>
+      <p>Adaptive ambient sounds that reduce stress and guide your mind into rest.</p>
+    </article>
+    <article class="card">
+      <h3>Sleep readiness check</h3>
+      <p>Real-time insights into your evening progress to keep you on the right path.</p>
+    </article>
+  </section>
+
+  <section id="routines" class="interactive">
+    <h2>Choose your evening routine</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab active" role="tab" data-routine="calm">Calm</button>
+      <button class="tab" role="tab" data-routine="focus">Focus</button>
+      <button class="tab" role="tab" data-routine="relax">Relax</button>
+    </div>
+
+    <div class="routine-content active" data-content="calm">
+      <ul class="routine-list">
+        <li class="routine-item">
+          <span class="icon">1</span>
+          <span>Dim the lights and set a warm evening scene</span>
+        </li>
+        <li class="routine-item">
+          <span class="icon">2</span>
+          <span>Play a soft ambient soundscape for 10 minutes</span>
+        </li>
+        <li class="routine-item">
+          <span class="icon">3</span>
+          <span>Take a slow breathing exercise to settle your mind</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="routine-content" data-content="focus">
+      <ul class="routine-list">
+        <li class="routine-item">
+          <span class="icon">1</span>
+          <span>Reduce screen brightness to a low evening setting</span>
+        </li>
+        <li class="routine-item">
+          <span class="icon">2</span>
+          <span>Play a focused ambient soundscape for 15 minutes</span>
+        </li>
+        <li class="routine-item">
+          <span class="icon">3</span>
+          <span>Practice a short mindful breathing exercise</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="routine-content" data-content="relax">
+      <ul class="routine-list">
+        <li class="routine-item">
+          <span class="icon">1</span>
+          <span>Dim the lights and set a warm evening scene</span>
+        </li>
+        <li class="routine-item">
+          <span class="icon">2</span>
+          <span>Play a soft ambient soundscape for 10 minutes</span>
+        </li>
+        <li class="routine-item">
+          <span class="icon">3</span>
+          <span>Take a deep breathing exercise to ease tension</span>
+        </li>
+      </ul>
+    </div>
+
+    <form class="form" id="signupForm" novalidate>
+      <div class="form-group">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name">
+        <span class="form-msg" id="nameMsg"></span>
+      </div>
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+        <span class="form-msg" id="emailMsg"></span>
+      </div>
+      <button type="submit" class="cta" style="justify-content: center;">Sign up for Nocturne</button>
+    </form>
+  </section>
+</main>
+
+<footer class="footer">
+  Nocturne — helping everyone fall asleep faster with personalised evening routines.
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.routine-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.routine;
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const targetContent = document.querySelector(`.routine-content[data-content="${target}"]`);
+      targetContent.classList.add('active');
+    });
+  });
+
+  const form = document.getElementById('signupForm');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const nameMsg = document.getElementById('nameMsg');
+  const emailMsg = document.getElementById('emailMsg');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    if (!nameInput.value.trim()) {
+      nameInput.classList.add('invalid');
+      nameMsg.textContent = 'Please enter your name.';
+      valid = false;
+    } else {
+      nameInput.classList.remove('invalid');
+      nameMsg.textContent = '';
+    }
+
+    const email = emailInput.value.trim();
+    if (!email) {
+      emailInput.classList.add('invalid');
+      emailMsg.textContent = 'Please enter your email address.';
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailInput.classList.add('invalid');
+      emailMsg.textContent = 'Please enter a valid email address.';
+      valid = false;
+    } else {
+      emailInput.classList.remove('invalid');
+      emailMsg.textContent = '';
+    }
+
+    if (valid) {
+      emailMsg.textContent = 'Welcome to Nocturne! Your routine is ready.';
+      emailMsg.classList.add('success');
+      form.reset();
+    }
+  });
+
+  nameInput.addEventListener('input', () => {
+    nameInput.classList.remove('invalid');
+    nameMsg.textContent = '';
+  });
+
+  emailInput.addEventListener('input', () => {
+    emailInput.classList.remove('invalid');
+    emailMsg.textContent = '';
+  });
+</script>
+
+</html>

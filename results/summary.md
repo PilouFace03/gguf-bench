@@ -1,6 +1,6 @@
 # Résultats du benchmark
 
-Machine : 6 threads, 7.2 Gio dispo, llama.cpp `v0.7.0`
+Machine : 6 threads, 7.1 Gio dispo, llama.cpp `v0.7.0`
 
 ## Classement (qualité puis vitesse)
 
@@ -11,6 +11,19 @@ Machine : 6 threads, 7.2 Gio dispo, llama.cpp `v0.7.0`
 | Qwen3.5-2B-Q4_K_M.gguf | 1.88 B | Q4_K_M | 1.28 Go | 4096 | 134.7 | 18.9 | 255 ms | 63 % | 75 % | 0.20 | 83 % |
 | Qwen3.5-0.8B-Q4_K_M.gguf | 0.75 B | Q4_K_M | 0.53 Go | 4096 | 272.0 | 35.8 | 151 ms | 50 % | 70 % | 0.39 | 83 % |
 
+## Épreuve « page web »
+
+Même consigne pour tous (landing page mono-fichier). Le score est
+**structurel** (autonomie, responsive, interactivité) : l'esthétique se
+juge à l'œil dans [`web/index.html`](web/index.html).
+
+| Modèle | Score tech. | Taille | Lignes | @media | Listeners JS | Ress. ext. | Page |
+|---|---|---|---|---|---|---|---|
+| Qwen3.5-0.8B-Q4_K_M.gguf | 100/100 | 7.5 Ko | 199 | 1 | 1 | 0 | [`Qwen3.5-0.8B-Q4_K_M.html`](web/Qwen3.5-0.8B-Q4_K_M.html) |
+| Qwen3.5-2B-Q4_K_M.gguf | 85/100 | 16.5 Ko ⚠ incomplète | 465 | 1 | 1 | 0 | [`Qwen3.5-2B-Q4_K_M.html`](web/Qwen3.5-2B-Q4_K_M.html) |
+| Spark-X2.6-4B-Q4_K_M.gguf | 85/100 | 11.8 Ko | 501 | 1 | 4 | 0 | [`Spark-X2.6-4B-Q4_K_M.html`](web/Spark-X2.6-4B-Q4_K_M.html) |
+| Qwen3.5-4B-Q4_K_M.gguf | 80/100 | 10.8 Ko | 294 | 0 | 0 | 0 | [`Qwen3.5-4B-Q4_K_M.html`](web/Qwen3.5-4B-Q4_K_M.html) |
+
 ## Rappel méthodo
 
 - `pp` = préfill (tok/s d'ingestion du prompt), `tg` = génération (tok/s).
@@ -20,3 +33,6 @@ Machine : 6 threads, 7.2 Gio dispo, llama.cpp `v0.7.0`
   accordée à la bonne réponse, « juste » = choix le plus probable.
 - `biais pos.` = probabilité moyenne donnée à la première proposition (0,25 = neutre).
 - Gén. : 6 tâches, auto-scoring ; les réponses brutes sont dans `raw/`.
+- Page web : score technique = autonomie (aucune ressource externe), balises
+  équilibrées, viewport, @media, variables CSS, flex/grid, JS interactif.
+  Il ne mesure pas l'esthétique : comparer visuellement via `web/index.html`.

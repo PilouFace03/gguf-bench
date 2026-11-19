@@ -36,6 +36,7 @@ Variantes utiles :
 ```bash
 python3 bench_gguf.py --mode speed      # débit uniquement
 python3 bench_gguf.py --mode eval       # qualité uniquement
+python3 bench_gguf.py --mode web        # uniquement l'épreuve page HTML
 python3 bench_gguf.py --force           # refaire même si déjà mesuré
 python3 bench_gguf.py --limit 1         # tester le premier modèle
 python3 bench_gguf.py --rotations 2     # QCM 2× plus rapide, biais moins bien corrigé
@@ -89,6 +90,10 @@ Le script alloue **4096 tokens de contexte**, jamais la valeur native (262 144 p
 Qwen3.5, 1 048 576 pour Spark). Le contexte natif ne sert qu'à l'affichage `--list` :
 c'est un maximum que le modèle *peut* gérer, pas une allocation.
 
+Exception : l'épreuve **page web** demande un fichier HTML long et dispose de
+**8192** tokens de contexte (`web.ctx` dans `eval_set.json`), soit 1 Gio de cache KV
+pour le 4B — ça reste sous les 8 Go de la machine.
+
 Pourquoi 4096 suffit : les prompts du bench font moins de 400 tokens, et les
 réponses génératives sont plafonnées à 500 tokens. Réduire le contexte diminue la
 RAM du cache KV et accélère légèrement le préfill, sans changer les mesures.
@@ -134,6 +139,57 @@ Avec les 4 modèles retenus, la RAM utilisée plafonne à ~4,1 Gio (le plus gros
 - **6 tâches génératives** (raisonnement FR, résumé contraint, code testé par
   assertions, JSON strict, traduction, format à puces), auto-notées quand c'est
   vérifiable, réponse brute sauvegardée pour relecture.
+- **1 page web** : la plus belle landing page possible, en un seul fichier HTML
+  (CSS + JS inclus). Voir la section dédiée ci-dessous.
+
+## Épreuve « page web »
+
+Objectif : comparer les modèles sur du **code front-end** en leur demandant une
+landing page complète, puis en regardant le résultat côte à côte.
+
+Consigne (identique pour tous, dans `eval_set.json` → `web`) : page mono-fichier
+pour un faux produit « Nocturne », CSS et JS inline, aucune ressource externe
+(pas de CDN, pas de police web, pas d'image distante), responsive 375 px / 1440 px,
+hero + 3 cartes + au moins un élément réellement interactif en JS natif.
+`temperature 0`, **4 500 tokens max** et **ctx 8192** (contre 4096 ailleurs) : une
+page complète ne tient pas dans 2 800 tokens — les modèles écrivent un CSS
+volumineux et se faisaient couper avant `<body>`, ce qui donnait des pages blanches.
+
+Si une page n'a pas de `</html>`, le script le signale (`⚠ page incomplète` dans la
+console, la galerie et `summary.md`) : c'est un échec de génération, pas un choix
+de style. Pour la refaire : `--mode web --force`.
+
+```bash
+# uniquement cette épreuve (les mesures vitesse/QCM existantes sont conservées)
+python3 bench_gguf.py --mode web --serve 8080
+
+# tout refaire, épreuve web incluse
+python3 bench_gguf.py --mode all --force
+```
+
+Chaque page est écrite dans `results/web/<modèle>.html` et la réponse brute dans
+`<modèle>.answer.md`. La galerie **`results/web/index.html`** (ou
+`http://<ip>:8080/web/`) affiche les pages côte à côte dans des iframes isolées
+(`sandbox`), triées par score technique, avec un lien « ouvrir en plein écran ».
+
+Le **score technique** (0-100) est volontairement structurel, pas esthétique :
+
+| Critère | Points |
+|---|---|
+| `<!doctype>` | 5 |
+| CSS inline (`<style>`) | 10 |
+| JS inline (`<script>`) | 10 |
+| aucune ressource externe | 15 |
+| balises équilibrées | 15 |
+| `meta viewport` | 10 |
+| au moins un `@media` | 10 |
+| variables CSS (`--x:`) | 5 |
+| flex ou grid | 10 |
+| `addEventListener` | 10 |
+
+Il détecte une page cassée ou dépendante du réseau ; **il ne dit rien de la
+beauté**. Le jugement final se fait à l'œil, dans la galerie — c'est tout l'intérêt
+de l'exercice.
 
 ## Pendant l'exécution : ce que tu vois
 
@@ -158,9 +214,11 @@ Tableau de bord `http://<ip>:8080/` (rafraîchi toutes les 3 s, sans recharger l
   `gén.` → `terminé`) et avancement (`QCM · 34/160`) ;
 - tableau comparatif avec barres colorées (vert ≥ 70 %, orange ≥ 40 %, rouge en dessous) ;
 - bloc dépliable par modèle : score par catégorie de QCM, détail des 6 tâches
-  génératives, biais de position, liens vers les réponses brutes ;
+  génératives, biais de position, lien vers la page web générée, liens vers les
+  réponses brutes ;
 - fin de page : les 80 dernières lignes du journal ;
-- `/results.csv` téléchargeable, `/raw/...` pour les sorties brutes.
+- `/results.csv` téléchargeable, `/raw/...` pour les sorties brutes,
+  `/web/` pour la galerie des pages HTML.
 
 ## Sorties
 
@@ -172,6 +230,7 @@ results/
   state.json      # état temps réel (utilisé par le tableau de bord)
   run.log         # journal horodaté de l'exécution
   raw/<modèle>/   # réponses brutes + mcq.json (probs par question)
+  web/            # pages HTML générées + index.html (galerie de comparaison)
   logs/<modèle>.log  # sortie de llama-server (diagnostic en cas d'échec)
 ```
 
